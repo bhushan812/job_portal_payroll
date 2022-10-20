@@ -5,7 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,7 +18,9 @@ import com.jobportal.dto.ErrorResponseDto;
 import com.jobportal.dto.IListJobDto;
 import com.jobportal.dto.JobDto;
 import com.jobportal.dto.SuccessResponseDto;
+import com.jobportal.entity.JobEntity;
 import com.jobportal.serviceInterface.JobInterface;
+import com.jobportal.utils.Comman;
 
 @RestController
 @RequestMapping("/jobs")
@@ -24,10 +29,10 @@ public class JobController {
 	private JobInterface jobInterface;
 
 	@PostMapping()
-	public ResponseEntity<?> addJobs(@RequestBody JobDto jobDto) {
+	public ResponseEntity<?> addJobs(@RequestAttribute(Comman.CUSTUM_ATTRIBUTE_USER_ID) Long id,@RequestBody JobDto jobDto) {
 		try {
-
-			this.jobInterface.addJobs(jobDto);
+           
+			this.jobInterface.addJobs(id,jobDto);
 
 			return new ResponseEntity<>(new SuccessResponseDto("job added succefully", "Success", jobDto),
 					HttpStatus.OK);
@@ -47,6 +52,23 @@ public class JobController {
 		System.err.println(2);
 		return new ResponseEntity<>(new SuccessResponseDto("All jobs", "Success", iListUserDto.getContent()),
 				HttpStatus.OK);
+
+	}
+	
+	@PutMapping("{id}")
+	public ResponseEntity<?> updatejobs(@PathVariable("id") Long id, @RequestBody JobDto jobDto) {
+		try {
+			JobDto jobdto = this.jobInterface.updateJob(jobDto, id);
+
+			return new ResponseEntity<>(
+					new SuccessResponseDto("job Updated Successfully..!!", "Updated..!!", jobdto),
+					HttpStatus.OK);
+
+		} catch (Exception e) {
+
+			return new ResponseEntity<>(new ErrorResponseDto(e.getMessage(), "job Not Updated"),
+					HttpStatus.BAD_REQUEST);
+		}
 
 	}
 

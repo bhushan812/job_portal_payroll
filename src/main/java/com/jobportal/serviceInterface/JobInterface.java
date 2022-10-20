@@ -5,12 +5,17 @@ import org.springframework.stereotype.Service;
 
 import com.jobportal.dto.IListJobDto;
 import com.jobportal.dto.JobDto;
+import com.jobportal.entity.JobEntity;
 
 @Service
 public interface JobInterface {
 
-	void addJobs(JobDto jobDto);
+	
 
 	Page<IListJobDto> getAllJobs(String search, String pagNumber, String pageSize);
+
+	void addJobs(Long id, JobDto jobDto);
+
+	JobDto updateJob(JobDto jobDto, Long id);
 
 }

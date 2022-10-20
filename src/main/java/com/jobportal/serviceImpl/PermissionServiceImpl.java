@@ -17,8 +17,10 @@ import org.springframework.stereotype.Service;
 
 import com.jobportal.dto.IPermissionListDto;
 import com.jobportal.dto.IUserJobListDto;
+import com.jobportal.dto.JobDto;
 import com.jobportal.dto.PermissionRequestDto;
 import com.jobportal.entity.PermissionEntity;
+import com.jobportal.excetpion.ResourceNotFoundException;
 import com.jobportal.repositories.PermissionRepository;
 import com.jobportal.serviceInterface.PermissionInterface;
 import com.jobportal.utils.Pagination;
@@ -43,13 +45,25 @@ public class PermissionServiceImpl implements PermissionInterface {
 	public Page<IPermissionListDto> getAllPermissions(String search, String pageNo, String pageSize) {
 		Pageable paging = new Pagination().getPagination(pageNo, pageSize);
 		Page<IPermissionListDto> iListPermissionDto;
-
+           System.out.println("heloo");
 		if ((search == "") || (search == null) || (search.length() == 0)) {
-			iListPermissionDto = this.permissionRepository.findByOrderByIdAsc(paging, IPermissionListDto.class);
+			iListPermissionDto = this.permissionRepository.findByOrderByIdDesc(paging, IPermissionListDto.class);
 		} else {
 			iListPermissionDto = this.permissionRepository.findByActionNameContaining(search, paging, IPermissionListDto.class);
 		}
 		return iListPermissionDto;
+	}
+
+	@Override
+	public PermissionRequestDto updatePermissions(PermissionRequestDto permissionRequestDto, Long id) {
+		
+		PermissionEntity permissionEntity	=permissionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource Note Found"));
+		permissionEntity.setActionName(permissionRequestDto.getActionName());
+		permissionEntity.setBaseUrl(permissionRequestDto.getBaseUrl());
+		permissionEntity.setDescription(permissionRequestDto.getDescription());
+		permissionEntity.setMethod(permissionRequestDto.getMethod());
+		permissionRepository.save(permissionEntity);
+		return permissionRequestDto;
 	}
 
 	

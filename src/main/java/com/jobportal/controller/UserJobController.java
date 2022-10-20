@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,7 @@ import com.jobportal.entity.UserEntity;
 import com.jobportal.repositories.UserRepository;
 import com.jobportal.serviceInterface.EmailServiceInterface;
 import com.jobportal.serviceInterface.UserJobInterface;
+import com.jobportal.utils.Comman;
 
 @RestController
 @RequestMapping("/user-jobs")
@@ -32,20 +34,11 @@ public class UserJobController {
 	private EmailServiceInterface emailServiceInterface;
 
 	@PostMapping
-	public ResponseEntity<?> applyMultipleJobs(@RequestBody UserJobDto userJobDto) throws Exception {
-		// try {
-		Long userEntity = userJobDto.getUserId();
-		UserEntity userEntity2 = this.userRepository.findById(userEntity).orElseThrow();
-		System.err.println("userINFO: "+userEntity2);
-		String email = userEntity2.getEmail();
-		this.userJobInterface.applyMultipleJob(userJobDto);
+	public ResponseEntity<?> applyMultipleJobs(@RequestAttribute(Comman.CUSTUM_ATTRIBUTE_USER_ID) Long userId,@RequestBody UserJobDto userJobDto) throws Exception {
+		
+		this.userJobInterface.applyJobs(userId, userJobDto);
 
-		emailServiceInterface.sendSimpleMessage(email, "Apna jobs", "Job applied sucessfully");
 		return new ResponseEntity<>(new SuccessResponseDto("Job applied sucessfully", "Sucess"), HttpStatus.CREATED);
-//		} catch (ResourceNotFoundException e) {
-//			return new ResponseEntity<>(new ErrorResponseDto("You already applied for this position", "check new jo"),
-//					HttpStatus.BAD_REQUEST);
-//		}
 	}
 	
 	
@@ -72,4 +65,7 @@ public class UserJobController {
 				HttpStatus.OK);
 
 	}
+	
+	
+	
 }
