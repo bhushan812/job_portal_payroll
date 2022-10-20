@@ -1,12 +1,16 @@
 package com.jobportal.entity;
 
 import java.sql.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -47,6 +51,10 @@ public class PermissionEntity {
 	@Column(name = "updated_at")
 	@UpdateTimestamp
 	private Date updatedAt;
+	
+	@OneToMany(mappedBy = "permissionEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<RolePermissionEntity> rolePermissionEntity;
+
 
 	public Long getId() {
 		return id;

@@ -53,7 +53,11 @@ public class RoleEntity {
 	@Column(name = "updated_at")
 	@UpdateTimestamp
 	private Date updatedAt;
+     
+	@OneToMany(mappedBy = "roleEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<RolePermissionEntity> rolePermissionEntity;
 
+	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "role", cascade = CascadeType.ALL)
 	@JsonBackReference
 	List<UserRoleEntity> userRole;
