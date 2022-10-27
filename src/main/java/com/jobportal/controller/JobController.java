@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,8 @@ public class JobController {
 	@Autowired
 	private JobInterface jobInterface;
 
+	
+@PreAuthorize("hasRole('addJobs')")
 	@PostMapping()
 	public ResponseEntity<?> addJobs(@RequestAttribute(Comman.CUSTUM_ATTRIBUTE_USER_ID) Long id,@RequestBody JobDto jobDto) {
 		try {
@@ -44,6 +47,7 @@ public class JobController {
 
 	}
 
+@PreAuthorize("hasRole('getAllJobs')")
 	@GetMapping
 	public ResponseEntity<?> getAllJobs(@RequestParam(defaultValue = "") String search,
 			@RequestParam(defaultValue = "1") String PageNo, @RequestParam(defaultValue = "5") String PageSize) {
@@ -54,7 +58,7 @@ public class JobController {
 				HttpStatus.OK);
 
 	}
-	
+@PreAuthorize("hasRole('updatejobs')")
 	@PutMapping("{id}")
 	public ResponseEntity<?> updatejobs(@PathVariable("id") Long id, @RequestBody JobDto jobDto) {
 		try {

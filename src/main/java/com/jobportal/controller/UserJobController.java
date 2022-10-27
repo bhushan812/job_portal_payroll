@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +34,7 @@ public class UserJobController {
 	@Autowired
 	private EmailServiceInterface emailServiceInterface;
 
+	@PreAuthorize("hasRole('applyMultipleJobs')")
 	@PostMapping
 	public ResponseEntity<?> applyMultipleJobs(@RequestAttribute(Comman.CUSTUM_ATTRIBUTE_USER_ID) Long userId,@RequestBody UserJobDto userJobDto) throws Exception {
 		
@@ -41,7 +43,7 @@ public class UserJobController {
 		return new ResponseEntity<>(new SuccessResponseDto("Job applied sucessfully", "Sucess"), HttpStatus.CREATED);
 	}
 	
-	
+	@PreAuthorize("hasRole('getByUserIdJobsList')")
 	@GetMapping("/user/{id}")
 	public ResponseEntity<?> getByUserIdJobsList(@PathVariable(name = "id") Long UserId,
 			@RequestParam(defaultValue = "1") String PageNo, @RequestParam(defaultValue = "5") String PageSize) {
@@ -54,6 +56,7 @@ public class UserJobController {
 
 	}
 	
+	@PreAuthorize("hasRole('getByJobIdUserList')")
 	@GetMapping("/job")
 	public ResponseEntity<?> getByJobIdUserList(@RequestParam(defaultValue = "")  Long jobId,
 			@RequestParam(defaultValue = "1") String PageNo, @RequestParam(defaultValue = "5") String PageSize) {

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +33,7 @@ public class PermissionController {
 	@Autowired
 	private PermissionInterface permissionInterface;
 
-	
+	@PreAuthorize("hasRole('addPermission')")
 	@PostMapping()
 	public ResponseEntity<?> addPermission(@Valid @RequestBody PermissionRequestDto permissionRequestDto) {
 		try {
@@ -47,7 +48,7 @@ public class PermissionController {
 		}
 
 	}
-	
+	@PreAuthorize("hasRole('getAllPermissions')")
 	@GetMapping()
 	public ResponseEntity<?> getAllPermissions(@RequestParam(defaultValue = "") String search,
 			@RequestParam(defaultValue = "1") String pageNo, @RequestParam(defaultValue = "50") String pageSize) {
@@ -63,7 +64,7 @@ public class PermissionController {
 					HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+	@PreAuthorize("hasRole('updatePermissions')")
 	@PutMapping("{id}")
 	public ResponseEntity<?> updatePermissions(@PathVariable("id") Long id, @RequestBody PermissionRequestDto permissionRequestDto) {
 		try {
